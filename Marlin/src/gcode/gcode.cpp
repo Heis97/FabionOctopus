@@ -189,6 +189,7 @@ void GcodeSuite::get_destination_from_command() {
         if(axis_is_relative(AxisEnum(i)) )
         {
           destination[i] = current_position[i] + v;
+          Serial.println('rel');
         }
         else
         {
@@ -207,7 +208,7 @@ void GcodeSuite::get_destination_from_command() {
              //Serial.println(destination[i]);
              break; 
             default:
-              //Serial.println('def');
+              Serial.println('def');
              destination[i] = v;break;
           }
           

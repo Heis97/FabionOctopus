@@ -32,13 +32,25 @@ void GcodeSuite::G25() {
 
   
 }
+void  GcodeSuite::laser_calibrate_disp(int8_t disp,float distXY, float distZ,float feedrate)
+{
+  laser_calibrate_start_move(disp);
+  laser_cycle_one_Axis(X_AXIS,disp,distXY, distZ, feedrate);
+  laser_calibrate_start_move(disp);
+  laser_cycle_one_Axis(Y_AXIS,disp,distXY, distZ, feedrate);
+  update_workspace_offset_Z(disp);
+  laser_calibrate_start_move(disp);
+}
 
 void GcodeSuite::laser_cycle_one_Axis(AxisEnum AxisXY, int8_t disp,float distXY, float distZ,float feedrate)
 {
   endstops.enable(true);
   abce_pos_t st_pos_beg = planner.get_axis_positions_mm();
   float xy_dhm_cur = planner.triggered_position_mm(AxisXY);
-  
+  Serial.print("st_pos_beg.x: ");
+  Serial.print(st_pos_beg.x);
+  Serial.print("xy_dhm_cur: ");
+  Serial.println(xy_dhm_cur);
   AxisEnum AxisZ;
   switch (disp)
   {
@@ -84,15 +96,7 @@ void GcodeSuite::laser_cycle_one_Axis(AxisEnum AxisXY, int8_t disp,float distXY,
   endstops.enable(false);
 }
 
-void  GcodeSuite::laser_calibrate_disp(int8_t disp,float distXY, float distZ,float feedrate)
-{
-  laser_calibrate_start_move(disp);
-  laser_cycle_one_Axis(X_AXIS,disp,distXY, distZ, feedrate);
-  laser_calibrate_start_move(disp);
-  laser_cycle_one_Axis(Y_AXIS,disp,distXY, distZ, feedrate);
-  update_workspace_offset_Z(disp);
-  laser_calibrate_start_move(disp);
-}
+
 
 void GcodeSuite::laser_calibrate_start_move(int8_t disp)
 {
@@ -114,9 +118,9 @@ void GcodeSuite::laser_calibrate_start_move(int8_t disp)
         break;
     }
   } 
+
   prepare_line_to_destination();
   planner.set_machine_position_mm(destination);
-
 }
 
 void GcodeSuite::laser_cycle(AxisEnum AxisXY, AxisEnum AxisZ,float dist, float z, float feedrate,float* xy_dhm)

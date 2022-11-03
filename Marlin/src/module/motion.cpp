@@ -1183,7 +1183,7 @@ FORCE_INLINE void segment_idle(millis_t &next_idle_ms) {
         #endif
       }
     #endif // HAS_MESH
-
+    Serial.println("buffer_line");
     planner.buffer_line(destination, scaled_fr_mm_s);
     return false; // caller will update current_position
   }
@@ -1381,6 +1381,7 @@ void prepare_line_to_destination() {
     #elif IS_KINEMATIC
       line_to_destination_kinematic()
     #else
+    Serial.println("line_to_destination_cartesian");
       line_to_destination_cartesian()
     #endif
   ) return;
