@@ -168,7 +168,7 @@ xyz_pos_t cartes;
   xyz_pos_t home_offset{0};
 #endif
 xyz_pos_t petry_shift{0};
-
+bool calibrated_disp[3];
 xyz_pos_t position_shift_Z{0};
 xyz_pos_t position_shift_A{0};
 xyz_pos_t position_shift_B{0};
@@ -247,8 +247,11 @@ void report_current_position() {
  * definitively interrupts the printing flow.
  */
 void report_current_position_projected() {
-  report_logical_position(current_position);
+  
+ // report_logical_position(current_position);
   stepper.report_a_position(planner.position);
+  
+
 }
 
 #if ENABLED(AUTO_REPORT_POSITION)
@@ -1183,7 +1186,6 @@ FORCE_INLINE void segment_idle(millis_t &next_idle_ms) {
         #endif
       }
     #endif // HAS_MESH
-    Serial.println("buffer_line");
     planner.buffer_line(destination, scaled_fr_mm_s);
     return false; // caller will update current_position
   }
@@ -1381,7 +1383,6 @@ void prepare_line_to_destination() {
     #elif IS_KINEMATIC
       line_to_destination_kinematic()
     #else
-    Serial.println("line_to_destination_cartesian");
       line_to_destination_cartesian()
     #endif
   ) return;

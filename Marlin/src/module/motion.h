@@ -486,6 +486,7 @@ void home_if_needed(const bool keeplev=false);
   #if HAS_POSITION_SHIFT
     extern xyz_pos_t position_shift;
   #endif
+  extern bool calibrated_disp[];
   extern xyz_pos_t position_shift_Z;
   extern xyz_pos_t position_shift_A;
   extern xyz_pos_t position_shift_B;

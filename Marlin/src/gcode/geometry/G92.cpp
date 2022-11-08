@@ -60,6 +60,7 @@ void GcodeSuite::G92() {
   #endif
 
   switch (subcode_G92) {
+
     default: return;                                                  // Ignore unknown G92.x
 
     #if ENABLED(CNC_COORDINATE_SYSTEMS) && !IS_SCARA
@@ -91,12 +92,16 @@ void GcodeSuite::G92() {
         if (parser.seenval(AXIS_CHAR(i))) {
           const float l = parser.value_axis_units((AxisEnum)i),       // Given axis coordinate value, converted to millimeters
                       v = TERN0(HAS_EXTRUDERS, i == E_AXIS) ? l : LOGICAL_TO_NATIVE(l, i),  // Axis position in NATIVE space (applying the existing offset)
-                      d = v - current_position[i];                    // How much is the current axis position altered by?
+                      d = current_position[i] - position_shift[i] - v;                    // How much is the current axis position altered by?
           if (!NEAR_ZERO(d)) {
             #if HAS_POSITION_SHIFT && !IS_SCARA                       // When using workspaces...
               if (TERN1(HAS_EXTRUDERS, i != E_AXIS)) {
-                position_shift[i] += d;                               // ...most axes offset the workspace...
+                position_shift[i] = d;                               // ...most axes offset the workspace...
                 update_workspace_offset((AxisEnum)i);
+                if(i==X_AXIS||i==Y_AXIS ||i==Z_AXIS||i==A_AXIS||i==B_AXIS)
+                {
+                  calibrated_disp[active_extruder] = false;
+                }
               }
               else {
                 #if HAS_EXTRUDERS

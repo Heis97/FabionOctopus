@@ -189,34 +189,18 @@ void GcodeSuite::get_destination_from_command() {
         if(axis_is_relative(AxisEnum(i)) )
         {
           destination[i] = current_position[i] + v;
-          Serial.println('rel');
         }
         else
         {
-          switch (active_extruder)
-          {
-            case 0: 
-              destination[i] = v + workspace_offset_Z[i];
-              //Serial.println(destination[i]);
-              break;  
-            case 1:
-             destination[i] = v + workspace_offset_A[i];
-             //Serial.println(destination[i]);
-             break; 
-            case 2:
-             destination[i] = v + workspace_offset_B[i];
-             //Serial.println(destination[i]);
-             break; 
-            default:
-              Serial.println('def');
-             destination[i] = v;break;
-          }
+          destination[i] = v + comp_current_tool_position(i);
           
         }
     }
     else
       destination[i] = current_position[i];
   }
+
+
 
   #if HAS_EXTRUDERS
     // Get new E position, whether absolute or relative
@@ -257,7 +241,32 @@ void GcodeSuite::get_destination_from_command() {
       cutter.set_inline_enabled(false);
   #endif
 }
-
+float GcodeSuite::comp_current_tool_position(int8_t i)
+  {
+    float shift = 0;
+    if(calibrated_disp[active_extruder])
+    {
+      switch (active_extruder)
+      {
+      case 0:                        
+        shift = workspace_offset_Z[i];
+        break;  
+      case 1:
+         shift = workspace_offset_A[i];
+        break; 
+      case 2:
+         shift =  workspace_offset_B[i];
+        break; 
+      default:
+        break;
+      }
+    }
+    else
+    {
+       shift = position_shift[i];
+    }   
+    return shift;
+  }
 /**
  * Dwell waits immediately. It does not synchronize. Use M400 instead of G4
  */

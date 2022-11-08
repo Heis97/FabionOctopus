@@ -47,10 +47,6 @@ void GcodeSuite::laser_cycle_one_Axis(AxisEnum AxisXY, int8_t disp,float distXY,
   endstops.enable(true);
   abce_pos_t st_pos_beg = planner.get_axis_positions_mm();
   float xy_dhm_cur = planner.triggered_position_mm(AxisXY);
-  Serial.print("st_pos_beg.x: ");
-  Serial.print(st_pos_beg.x);
-  Serial.print("xy_dhm_cur: ");
-  Serial.println(xy_dhm_cur);
   AxisEnum AxisZ;
   switch (disp)
   {
@@ -68,6 +64,7 @@ void GcodeSuite::laser_cycle_one_Axis(AxisEnum AxisXY, int8_t disp,float distXY,
     break;
   }
 
+  
   laser_cycle(AxisXY,AxisZ,distXY,distZ,feedrate, &xy_dhm_cur);
   laser_cycle(AxisXY,AxisZ,distXY/5,distZ/10,feedrate/5, &xy_dhm_cur);
   laser_cycle(AxisXY,AxisZ,distXY/25,distZ/100,feedrate/10, &xy_dhm_cur);
@@ -94,6 +91,7 @@ void GcodeSuite::laser_cycle_one_Axis(AxisEnum AxisXY, int8_t disp,float distXY,
 
   endstops.not_homing();
   endstops.enable(false);
+  calibrated_disp[disp] = true;
 }
 
 

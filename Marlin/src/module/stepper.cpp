@@ -78,7 +78,6 @@
  */
 
 #include "stepper.h"
-
 Stepper stepper; // Singleton
 
 #define BABYSTEPPING_EXTRA_DIR_WAIT
@@ -1625,13 +1624,16 @@ void Stepper::isr() {
 
     // Advance pulses if not enough time to wait for the next ISR
   } while (next_isr_ticks < min_ticks);
-
+ 
   // Now 'next_isr_ticks' contains the period to the next Stepper ISR - And we are
   // sure that the time has not arrived yet - Warrantied by the scheduler
 
   // Set the next ISR to fire at the proper time
   HAL_timer_set_compare(MF_TIMER_STEP, hal_timer_t(next_isr_ticks));
 
+
+
+  //Serial.println(count_position[Y_AXIS]);
   // Don't forget to finally reenable interrupts
   hal.isr_on();
 }
@@ -1961,6 +1963,7 @@ void Stepper::pulse_phase_isr() {
     #endif
 
   } while (--events_to_do);
+ 
 }
 
 // This is the last half of the stepper interrupt: This one processes and
@@ -3049,7 +3052,7 @@ int32_t Stepper::triggered_position(const AxisEnum axis) {
 #endif
 
 void Stepper::report_a_position(const xyz_long_t &pos) {
-  SERIAL_ECHOLNPGM_P(
+  /*SERIAL_ECHOLNPGM_P(
     LIST_N(DOUBLE(NUM_AXES),
       TERN(SAYS_A, PSTR(STR_COUNT_A), PSTR(STR_COUNT_X)), pos.x,
       TERN(SAYS_B, PSTR("B:"), SP_Y_LBL), pos.y,
@@ -3061,8 +3064,48 @@ void Stepper::report_a_position(const xyz_long_t &pos) {
       SP_V_LBL, pos.v,
       SP_W_LBL, pos.w
     )
-  );
+  );*/
+  String mes = "cur_pos "
+    + String(count_position[X_AXIS]/planner.settings.axis_steps_per_mm[X_AXIS])+" "
+  + String(count_position[Y_AXIS]/planner.settings.axis_steps_per_mm[Y_AXIS])+" "
+  + String(count_position[Z_AXIS]/planner.settings.axis_steps_per_mm[Z_AXIS])+" "
+  + String(count_position[I_AXIS]/planner.settings.axis_steps_per_mm[I_AXIS])+" "
+  + String(count_position[J_AXIS]/planner.settings.axis_steps_per_mm[J_AXIS])+" "
+  + String(count_position[X_AXIS]/planner.settings.axis_steps_per_mm[X_AXIS]- comp_current_tool_position(X_AXIS))+" "
+  + String(count_position[Y_AXIS]/planner.settings.axis_steps_per_mm[Y_AXIS]- comp_current_tool_position(Y_AXIS))+" "
+  + String(count_position[Z_AXIS]/planner.settings.axis_steps_per_mm[Z_AXIS]- comp_current_tool_position(Z_AXIS))+" "
+  + String(count_position[I_AXIS]/planner.settings.axis_steps_per_mm[I_AXIS]- comp_current_tool_position(I_AXIS))+" "
+  + String(count_position[J_AXIS]/planner.settings.axis_steps_per_mm[J_AXIS] -comp_current_tool_position(J_AXIS))+" ";
+
+  Serial.println(mes);
+ 
 }
+float Stepper::comp_current_tool_position(int8_t i)
+  {
+    float shift = 0;
+    if(calibrated_disp[active_extruder])
+    {
+      switch (active_extruder)
+      {
+      case 0:                        
+        shift = workspace_offset_Z[i];
+        break;  
+      case 1:
+         shift = workspace_offset_A[i];
+        break; 
+      case 2:
+         shift =  workspace_offset_B[i];
+        break; 
+      default:
+        break;
+      }
+    }
+    else
+    {
+       shift = position_shift[i];
+    }   
+    return shift;
+  }
 
 void Stepper::report_positions() {
 

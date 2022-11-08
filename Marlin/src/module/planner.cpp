@@ -3230,13 +3230,10 @@ void Planner::set_machine_position_mm(const abce_pos_t &abce) {
       LROUND(abce.w * settings.axis_steps_per_mm[W_AXIS])
     )
   );
-  Serial.println(block_buffer_head);
-  Serial.println(block_buffer_tail);
   if (has_blocks_queued()) {
     //previous_nominal_speed_sqr = 0.0; // Reset planner junction speeds. Assume start from rest.
     //previous_speed.reset();
       buffer_sync_block();
-      Serial.println("sync");
   }
   
   else {
@@ -3246,7 +3243,6 @@ void Planner::set_machine_position_mm(const abce_pos_t &abce) {
       stepper.set_position(stepper_pos);
     #else
       stepper.set_position(position);
-      Serial.println("set pos");
     #endif
   }
 }
