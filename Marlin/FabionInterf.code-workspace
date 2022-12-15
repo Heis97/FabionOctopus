@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "../../PyrhonProgramms/FabionInterf"
+		},
+		{
+			"name": "FabionOctopus",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"atomic": "cpp",
+			"cstdint": "cpp",
+			"chrono": "cpp",
+			"new": "cpp",
+			"stdexcept": "cpp",
+			"algorithm": "cpp",
+			"charconv": "cpp",
+			"fstream": "cpp",
+			"type_traits": "cpp",
+			"typeinfo": "cpp",
+			"xiosbase": "cpp",
+			"xstring": "cpp",
+			"string": "cpp"
+		}
+	}
+}
