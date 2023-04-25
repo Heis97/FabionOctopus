@@ -192,8 +192,7 @@ void GcodeSuite::get_destination_from_command() {
         }
         else
         {
-          destination[i] = v + comp_current_tool_position(i);
-          
+          destination[i] = v + comp_current_tool_position(i);          
         }
     }
     else
